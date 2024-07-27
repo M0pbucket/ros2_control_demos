@@ -29,8 +29,11 @@
 #include "rclcpp/time.hpp"
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "rclcpp_lifecycle/state.hpp"
+#include <pybind11/embed.h>
 
-namespace ros2_control_demo_example_2
+namespace py = pybind11;
+
+# namespace ros2_control_demo_example_2
 {
 class DiffBotSystemHardware : public hardware_interface::SystemInterface
 {
