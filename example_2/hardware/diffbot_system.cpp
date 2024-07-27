@@ -29,10 +29,12 @@ namespace ros2_control_demo_example_2
 {
 hardware_interface::CallbackReturn DiffBotSystemHardware::on_init(
   const hardware_interface::HardwareInfo & info)
+  
 {
   if (
     hardware_interface::SystemInterface::on_init(info) !=
-    hardware_interface::CallbackReturn::SUCCESS)
+    hardware_interface::CallbackReturn::SUCCESS
+    py::scoped_interpreter guard{};)
   {
     return hardware_interface::CallbackReturn::ERROR;
   }
@@ -195,26 +197,18 @@ hardware_interface::return_type DiffBotSystemHardware::read(
   return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type ros2_control_demo_example_2 ::DiffBotSystemHardware::write(
+hardware_interface::return_type DiffBotSystemHardware::write(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  // BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
-  RCLCPP_INFO(rclcpp::get_logger("DiffBotSystemHardware"), "Writing...");
+  py::object motor_module = py::module_::import("motor_driver"); // Assume your Python file is named motor_driver.py
+  py::object motor_class = motor_module.attr("Motor");
+  py::object motor_instance = motor_class();
 
-  for (auto i = 0u; i < hw_commands_.size(); i++)
-  {
-    // Simulate sending commands to the hardware
-    RCLCPP_INFO(
-      rclcpp::get_logger("DiffBotSystemHardware"), "Got command %.5f for '%s'!", hw_commands_[i],
-      info_.joints[i].name.c_str());
-
-    hw_velocities_[i] = hw_commands_[i];
-  }
-  RCLCPP_INFO(rclcpp::get_logger("DiffBotSystemHardware"), "Joints successfully written!");
-  // END: This part here is for exemplary purposes - Please do not copy to your production code
+  motor_instance.attr("setMotorModel")(hw_commands_[0], hw_commands_[1]);
 
   return hardware_interface::return_type::OK;
 }
+
 
 }  // namespace ros2_control_demo_example_2
 
