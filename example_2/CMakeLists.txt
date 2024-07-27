@@ -22,6 +22,10 @@ foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
 
+# find pybind dependency
+find_package(pybind11 REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE pybind11::embed)
+
 ## COMPILE
 add_library(
   ros2_control_demo_example_2
